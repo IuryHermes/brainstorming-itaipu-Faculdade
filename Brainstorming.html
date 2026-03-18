@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brainstorming - Intervenção Tecnológica Itaipu</title>
+    <style>
+        /* Paleta de Cores e Variáveis */
+        :root {
+            --primary: #0f172a; /* Slate 900 */
+            --secondary: #2563eb; /* Blue 600 */
+            --accent: #38bdf8; /* Sky 400 */
+            --background: #f8fafc; /* Slate 50 */
+            --surface: #ffffff;
+            --text-main: #334155; /* Slate 700 */
+            --text-light: #64748b; /* Slate 500 */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        /* Header com Gradiente Profissional */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #1e293b 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--secondary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: -30px auto 0;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Grid de Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background-color: var(--surface);
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            border-color: var(--accent);
+        }
+
+        .icon-wrapper {
+            width: 60px;
+            height: 60px;
+            background-color: #eff6ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+
+        .tag {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .btn-view {
+            background-color: transparent;
+            color: var(--secondary);
+            border: 2px solid var(--secondary);
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .card:hover .btn-view {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        /* Modal / Pop-up Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--surface);
+            width: 90%;
+            max-width: 700px;
+            border-radius: 12px;
+            padding: 40px;
+            position: relative;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #ef4444;
+        }
+
+        .modal-header {
+            margin-bottom: 25px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 15px;
+        }
+
+        .modal-header h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-body h4 {
+            color: var(--secondary);
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .modal-body ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+        }
+
+        .modal-highlight {
+            background-color: #f8fafc;
+            border-left: 4px solid var(--secondary);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+            font-style: italic;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            header h1 { font-size: 2rem; }
+            .modal-content { padding: 25px; width: 95%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Matriz de Soluções Tecnológicas</h1>
+        <p>Propostas de intervenção para Inclusão Digital, Cibersegurança e Combate à Vulnerabilidade Social no Bairro Itaipu (Alinhamento ODS 5 e 10).</p>
+	<p> IURY ANTONIO HERMES <p>
+    </header>
+
+    <div class="container">
+        <div class="grid">
+            
+            <div class="card" onclick="openModal('modal1')">
+                <div class="icon-wrapper">📱</div>
+                <span class="tag">Solução Educacional</span>
+                <h2>Guia "Digital Seguro"</h2>
+                <p>Cartilha interativa focada em UX para letramento digital e autonomia de moradores sem familiaridade técnica.</p>
+                <button class="btn-view">Ver Detalhes</button>
+            </div>
+
+            <div class="card" onclick="openModal('modal2')">
+                <div class="icon-wrapper">🤖</div>
+                <span class="tag">Solução de Segurança</span>
+                <h2>Bot "Monitor de Links"</h2>
+                <p>Chatbot automatizado para análise de ameaças em tempo real e prevenção de Engenharia Social via WhatsApp.</p>
+                <button class="btn-view">Ver Detalhes</button>
+            </div>
+
+            <div class="card" onclick="openModal('modal3')">
+                <div class="icon-wrapper">🛡️</div>
+                <span class="tag">Impacto Social</span>
+                <h2>Jovens Multiplicadores</h2>
+                <p>Capacitação técnica para jovens atuarem como primeira linha de defesa cibernética de suas próprias famílias.</p>
+                <button class="btn-view">Ver Detalhes</button>
+            </div>
+
+            <div class="card" onclick="openModal('modal4')">
+                <div class="icon-wrapper">🌐</div>
+                <span class="tag">Infraestrutura</span>
+                <h2>Portal Itaipu Conectado</h2>
+                <p>Aplicação Web Progressiva (PWA) de baixo custo para centralização de serviços públicos e informações do bairro.</p>
+                <button class="btn-view">Ver Detalhes</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal1" onclick="closeOnOutsideClick(event, 'modal1')">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modal1')">&times;</button>
+            <div class="modal-header">
+                <span class="tag">Solução Educacional</span>
+                <h2>📱 Guia "Digital Seguro" (Mobile-First)</h2>
+            </div>
+            <div class="modal-body">
+                <p>Uma cartilha digital otimizada para distribuição via WhatsApp, projetada especificamente para o público com analfabetismo digital funcional.</p>
+                
+                <h4>Arquitetura da Informação & UX</h4>
+                <ul>
+                    <li><strong>Design de Baixa Fricção:</strong> Uso de ícones universais e linguagem cidadã, evitando jargões de TI.</li>
+                    <li><strong>Baixo Consumo de Dados:</strong> Otimização extrema de PDF para que o download seja rápido mesmo em redes 3G precárias. Acesso offline garantido após o download.</li>
+                </ul>
+
+                <h4>Conteúdo Estruturado</h4>
+                <ul>
+                    <li><strong>Fundamentos de Busca:</strong> Passo a passo visual de como utilizar o Google eficientemente para agendar serviços no SUS e pesquisar vagas de emprego.</li>
+                    <li><strong>Defesa Básica:</strong> Como identificar o certificado de segurança (cadeado HTTPS) e analisar URLs para não cair em sites clonados.</li>
+                    <li><strong>Checklist Antigolpe:</strong> Regras de ouro para proteger contas do WhatsApp e chaves PIX contra ataques de Engenharia Social.</li>
+                </ul>
+
+                <div class="modal-highlight">
+                    "O impacto desta solução é devolver a autonomia. O morador deixa de ter uma postura passiva (de medo) e passa a auditar ativamente os links que recebe."
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal2" onclick="closeOnOutsideClick(event, 'modal2')">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modal2')">&times;</button>
+            <div class="modal-header">
+                <span class="tag">Solução de Segurança</span>
+                <h2>🤖 Bot "Monitor de Links" (Chatbot)</h2>
+            </div>
+            <div class="modal-body">
+                <p>Uma ferramenta tecnológica prática que atua como um "antivírus comportamental", desenvolvido em JavaScript (Node.js) e integrado à API do WhatsApp/Telegram.</p>
+                
+                <h4>Funcionamento Técnico</h4>
+                <ul>
+                    <li><strong>Análise em Tempo Real:</strong> O usuário encaminha uma mensagem suspeita (ex: "Promoção relógio grátis") para o número do Bot.</li>
+                    <li><strong>Extração e Validação:</strong> O bot extrai as URLs usando Regex e cruza com bases de dados de segurança (como APIs de prevenção a phishing).</li>
+                    <li><strong>Feedback Imediato:</strong> Retorna uma mensagem de alerta em linguagem acessível caso o domínio seja recente ou malicioso.</li>
+                </ul>
+
+                <h4>Aplicações Diretas</h4>
+                <ul>
+                    <li>Desmascarar falsas vagas de emprego que cobram taxas.</li>
+                    <li>Identificar links de clonagem de contas.</li>
+                </ul>
+
+                <div class="modal-highlight">
+                    "A principal barreira identificada foi o medo paralisante de clicar em links. O bot funciona como um ambiente seguro (sandbox social) onde o morador pode validar a informação antes de agir."
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal3" onclick="closeOnOutsideClick(event, 'modal3')">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modal3')">&times;</button>
+            <div class="modal-header">
+                <span class="tag">Impacto Social</span>
+                <h2>🛡️ Jovens Multiplicadores de Segurança</h2>
+            </div>
+            <div class="modal-body">
+                <p>Ação de extensão presencial ou híbrida que foca no letramento técnico dos jovens do bairro, transformando-os em agentes de segurança cibernética para suas famílias.</p>
+                
+                <h4>Ementa da Capacitação</h4>
+                <ul>
+                    <li><strong>Módulo 1: Privacidade e Dados:</strong> Princípios básicos da LGPD, os riscos de superexposição nas redes sociais e como os dados são comercializados.</li>
+                    <li><strong>Módulo 2: Hardening Básico:</strong> Ensino prático de como configurar Autenticação em Duas Etapas (2FA) nos celulares dos pais e avós.</li>
+                    <li><strong>Módulo 3: Identidade Profissional:</strong> Como construir currículos em PDF de forma segura, sem expor dados sensíveis em plataformas abertas.</li>
+                </ul>
+
+                <div class="modal-highlight">
+                    "Ataca dois problemas simultâneos: protege os adultos vulneráveis e proporciona uma introdução à carreira tecnológica para os jovens, criando uma barreira de desenvolvimento contra a cooptação pelo tráfico."
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal4" onclick="closeOnOutsideClick(event, 'modal4')">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('modal4')">&times;</button>
+            <div class="modal-header">
+                <span class="tag">Infraestrutura</span>
+                <h2>🌐 Portal Itaipu Conectado (PWA)</h2>
+            </div>
+            <div class="modal-body">
+                <p>Desenvolvimento de uma Aplicação Web Progressiva (Progressive Web App) que funciona como um aplicativo nativo, mas roda direto do navegador, não exigindo espaço na memória do celular.</p>
+                
+                <h4>Funcionalidades Core</h4>
+                <ul>
+                    <li><strong>Hub de Serviços:</strong> Centralização de links oficiais e verificados do Governo Federal, Sine, e agendamentos de Saúde, blindando o usuário contra resultados de busca patrocinados e fraudulentos.</li>
+                    <li><strong>Mural Comunitário:</strong> Substituição das placas e avisos físicos precários por uma timeline digital de utilidade pública.</li>
+                    <li><strong>Cache Estratégico:</strong> Uso de Service Workers para permitir o carregamento das informações principais mesmo quando o sinal do Wi-Fi comunitário oscilar.</li>
+                </ul>
+
+                <div class="modal-highlight">
+                    "Considerando a infraestrutura precária de ruas e becos do bairro, a mobilidade digital através do portal torna-se a infraestrutura mais ágil e barata a ser implementada."
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para abrir o modal
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            // Impede a rolagem do fundo quando o modal está aberto
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Função para fechar o modal pelo botão X
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            // Restaura a rolagem do fundo
+            document.body.style.overflow = 'auto';
+        }
+
+        // Função para fechar clicando fora da caixa de conteúdo
+        function closeOnOutsideClick(event, modalId) {
+            if (event.target.id === modalId) {
+                closeModal(modalId);
+            }
+        }
+
+        // Adiciona suporte à tecla ESC para fechar modais
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                const modals = document.querySelectorAll('.modal-overlay.active');
+                modals.forEach(modal => {
+                    closeModal(modal.id);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
